@@ -1,8 +1,8 @@
 name: Redis Keep-Alive
 on:
   schedule:
-    - cron: '0 0 * * *'  
-  workflow_dispatch:      
+    - cron: '0 0 * * *'
+  workflow_dispatch:
 
 jobs:
   ping-redis:
@@ -13,16 +13,6 @@ jobs:
         with:
           node-version: 20
       - run: npm install ioredis
-      - run: node -e "
-          const Redis = require('ioredis');
-          const redis = new Redis(process.env.REDIS_URL);
-          redis.set('keepalive', Date.now()).then(() => {
-            console.log('Redis pinged successfully');
-            process.exit(0);
-          }).catch(err => {
-            console.error(err);
-            process.exit(1);
-          });
-        "
+      - run: node redis-ping.js
         env:
           REDIS_URL: ${{ secrets.REDIS_URL }}
